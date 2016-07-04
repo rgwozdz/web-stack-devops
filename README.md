@@ -1,4 +1,4 @@
-# Vagrant Web-stack Development-Environment
+# Vagrant web-stack development-environment
 
 ## Development Environment Specs
 
