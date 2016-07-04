@@ -1,0 +1,12 @@
+*.DS_Store
+
+# Webstorm
+.idea/**
+
+# Vagrant
+.vagrant/**
+.bundle/**
+
+*.retry
+
+shared/roles/**

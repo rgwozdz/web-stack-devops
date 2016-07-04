@@ -1,0 +1,66 @@
+# Provision a Vagrant VM with our usual web-stack technologies
+---
+- hosts: all
+  become: yes
+  gather_facts: no
+
+  vars:
+
+   # pg_hba.conf entries
+   pg_hba_additions:
+    - host all all 0.0.0.0/0 trust
+   # postgresql.conf listen_all
+   pg_listen_all: True
+
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+
+  tasks:
+  - name: ensure apt cache is up to date
+    apt: update_cache=yes cache_valid_time=86400
+
+  - name: install common
+    apt: name='software-properties-common'
+
+  - apt_repository: repo="ppa:ansible/ansible"
+
+  - name: ensure apt cache is up to date
+    apt: update_cache=yes cache_valid_time=86400
+
+  - name: ensure packages are installed
+    apt: name={{item}}
+    with_items:
+        - ansible
+        - postgresql
+        - nginx
+        - nodejs
+        - npm
+
+  - name: Create required symlinks - point "node" to "nodejs" bin
+    file:
+      src: /usr/bin/nodejs
+      dest: /usr/bin/node
+      state: link
+
+  - name: Add a directory for node Ansible callback plugins
+    file: path=/usr/share/ansible/plugins/callback state=directory
+
+  - name: Add module to create human readable output
+    template:
+      src: templates/human_log.py
+      dest: /usr/share/ansible/plugins/callback
+
+  - name: Add pretty-print module to Ansible
+    blockinfile:
+      dest: /etc/ansible/ansible.cfg
+      marker: "# {mark} ANSIBLE MANAGED CALLBACK PLUGIN BLOCK "
+      insertafter: '#callback_plugins   = /usr/share/ansible/plugins/callback'
+      content: |
+        callback_plugins   = /usr/share/ansible/plugins/callback
+
+  - name: Install Grunt and Mocha
+    npm: name={{ item }} state=present global=yes
+    with_items:
+      - grunt-cli
+      - mocha

@@ -1,0 +1,1 @@
+Placeholder to maintain the empty 'shared' directory in git.
