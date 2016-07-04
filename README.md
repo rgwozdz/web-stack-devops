@@ -42,7 +42,7 @@ By default, the initial creation of the VM with `vagrant up` with execute provis
 
 ### Connecting to the Vagrant VM
 
-SSH into your Vagrant VM. `cd` into to-cma-devops repo and
+SSH into your Vagrant VM. `cd` into web-stack-devops repo and
 
     $ vagrant ssh
 
